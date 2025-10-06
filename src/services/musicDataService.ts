@@ -20,8 +20,11 @@ class MusicDataService {
     this.isLoading = true;
 
     try {
-      // Try to load the music.txt file
-      const response = await fetch("/music.txt");
+      // Try to load the music.txt file - handle both dev and production paths
+      const musicPath = import.meta.env.DEV
+        ? "/music.txt"
+        : "/GitGudMusic/music.txt";
+      const response = await fetch(musicPath);
       if (!response.ok) {
         throw new Error(`Failed to load music.txt: ${response.status}`);
       }
