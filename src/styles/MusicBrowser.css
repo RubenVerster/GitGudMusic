@@ -6,14 +6,18 @@
 
 html {
   min-height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background-attachment: fixed;
+  background: transparent;
   color: #333;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .music-browser-app {
