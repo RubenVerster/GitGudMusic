@@ -61,16 +61,19 @@ class MusicDataService {
       const line = lines[i];
       if (!line.trim()) continue;
 
-      // Calculate indentation level
-      const match = line.match(/^(│\s*)*([├└]──\s*)?(.+)$/);
-      if (!match) continue;
+      // Parse tree structure: count │ characters to determine level
+      // Format: │   │   ├── filename or │   │   └── filename
+      const treeMatch = line.match(/^((?:│\s{3})*)(├──|└──)\s*(.+)$/);
+      if (!treeMatch) {
+        console.warn(`Could not parse line: "${line}"`);
+        continue;
+      }
 
-      const prefix = match[1] || "";
-      const connector = match[2] || "";
-      const name = match[3];
+      const indentPart = treeMatch[1]; // All the │    parts
+      const name = treeMatch[3].trim(); // The actual file/folder name
 
-      // Calculate level based on tree structure
-      const level = prefix.length / 4 + (connector ? 1 : 0);
+      // Calculate level: each │    represents one level
+      const level = (indentPart.match(/│/g) || []).length;
 
       // Determine if it's a file or folder
       const isFile = name.includes(".") && !name.endsWith("/");
@@ -86,21 +89,51 @@ class MusicDataService {
         path: "",
       };
 
-      // Find the correct parent
+      // Find the correct parent by popping stack until we find a parent at level-1
       while (stack.length > 0 && stack[stack.length - 1].level >= level) {
         stack.pop();
       }
 
       if (stack.length > 0) {
         const parent = stack[stack.length - 1].node;
-        parent.children!.push(node);
+        if (!parent.children) {
+          parent.children = [];
+        }
+        parent.children.push(node);
         node.path = parent.path ? `${parent.path}/${name}` : name;
       }
 
+      // Add folders to the stack for potential children
       if (!isFile) {
         stack.push({ node: node, level: level });
       }
     }
+
+    // Debug: count total items parsed
+    const countItems = (
+      node: MusicNode
+    ): { files: number; folders: number } => {
+      let files = 0;
+      let folders = 0;
+
+      if (node.type === "file") files++;
+      if (node.type === "folder") folders++;
+
+      if (node.children) {
+        for (const child of node.children) {
+          const childCount = countItems(child);
+          files += childCount.files;
+          folders += childCount.folders;
+        }
+      }
+
+      return { files, folders };
+    };
+
+    const stats = countItems(root);
+    console.log(
+      `Parsed music data: ${stats.files} files, ${stats.folders} folders`
+    );
 
     return root;
   }
