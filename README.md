@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# 🎵 GitGudMusic Browser
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive music collection browser built with React, TypeScript, and Vite. Browse your music library with multiple view modes, search functionality, and direct YouTube Music integration.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multiple View Modes**: Tree, List, and Grid views for your music collection
+- **Smart Search**: Real-time search across your entire music library
+- **Advanced Filtering**: Filter by file type and folder
+- **Collection Statistics**: View total files, folders, and audio files at a glance
+- **YouTube Music Integration**: Click any song to search it on YouTube Music
+- **Responsive Design**: Works perfectly on desktop and mobile devices
+- **Modern UI**: Beautiful gradient background with glassmorphism effects
 
-## React Compiler
+## 🚀 Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Visit the live application: [GitGudMusic Browser](https://yourusername.github.io/GitGudMusic/)
 
-## Expanding the ESLint configuration
+## 🛠️ Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** - Modern React with hooks and functional components
+- **TypeScript** - Full type safety and better developer experience
+- **Vite** - Lightning-fast build tool and development server
+- **React Icons** - Beautiful, customizable icons
+- **CSS3** - Modern styling with gradients and animations
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/GitGudMusic.git
+cd GitGudMusic
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+```bash
+npm install
 ```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open your browser and visit `http://localhost:5173`
+
+## 🏗️ Building for Production
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist` directory.
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── views/          # View-specific components (Tree, List, Grid)
+│   ├── Header.tsx      # Header with search and controls
+│   ├── Sidebar.tsx     # Stats and filters sidebar
+│   └── ContentArea.tsx # Main content display
+├── services/           # Data services
+├── styles/            # CSS stylesheets
+├── types/             # TypeScript type definitions
+└── main.tsx          # Application entry point
+```
+
+## 🎵 Music Data
+
+The application reads music data from `public/music.txt`, which should contain a tree-like structure of your music collection. The format supports:
+
+- Folders and subfolders
+- Audio files (MP3, M4A, WAV, FLAC)
+- Playlist files (XSPF)
+
+## 🚀 Deployment
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions. Every push to the main branch will trigger a new deployment.
+
+### Manual Deployment
+
+You can also deploy manually:
+
+```bash
+npm run build
+# Upload the contents of the 'dist' folder to your web server
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
