@@ -1,6 +1,6 @@
 export interface MusicNode {
   name: string;
-  type: 'file' | 'folder';
+  type: "file" | "folder";
   extension?: string;
   children?: MusicNode[];
   path: string;
@@ -14,11 +14,9 @@ export interface MusicStats {
 
 export interface FilterState {
   searchTerm: string;
-  fileTypeFilter: string;
-  folderFilter: string;
 }
 
-export type ViewType = 'tree' | 'list' | 'grid';
+export type ViewType = "tree" | "list" | "grid";
 
 export interface MusicBrowserState {
   currentView: ViewType;

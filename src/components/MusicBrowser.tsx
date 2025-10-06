@@ -21,8 +21,6 @@ const MusicBrowser = () => {
     error: null,
     filters: {
       searchTerm: "",
-      fileTypeFilter: "",
-      folderFilter: "",
     },
   });
 
@@ -53,13 +51,24 @@ const MusicBrowser = () => {
     loadData();
   }, []);
 
-  // Apply filters whenever filters or data change
-  useEffect(() => {
-    if (state.currentData && !state.isLoading) {
-      const filtered = filterData(state.currentData, state.filters);
-      setState((prev) => ({ ...prev, filteredData: filtered }));
-    }
-  }, [state.currentData, state.filters, state.isLoading]);
+  const matchesFilters = useCallback(
+    (node: MusicNode, filters: FilterState): boolean => {
+      // Only search filter now
+      if (
+        filters.searchTerm &&
+        !node.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+      ) {
+        // Check if any children match
+        if (node.children && node.children.length > 0) {
+          return node.children.some((child) => matchesFilters(child, filters));
+        }
+        return false;
+      }
+
+      return true;
+    },
+    []
+  );
 
   const filterData = useCallback(
     (node: MusicNode, filters: FilterState): MusicNode => {
@@ -78,39 +87,16 @@ const MusicBrowser = () => {
 
       return filtered;
     },
-    []
+    [matchesFilters]
   );
 
-  const matchesFilters = useCallback(
-    (node: MusicNode, filters: FilterState): boolean => {
-      // Search filter
-      if (
-        filters.searchTerm &&
-        !node.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      ) {
-        // Check if any children match
-        if (node.children && node.children.length > 0) {
-          return node.children.some((child) => matchesFilters(child, filters));
-        }
-        return false;
-      }
-
-      // File type filter
-      if (filters.fileTypeFilter && node.type === "file") {
-        if (node.extension !== filters.fileTypeFilter) {
-          return false;
-        }
-      }
-
-      // Folder filter
-      if (filters.folderFilter && !node.path.includes(filters.folderFilter)) {
-        return false;
-      }
-
-      return true;
-    },
-    []
-  );
+  // Apply filters whenever filters or data change
+  useEffect(() => {
+    if (state.currentData && !state.isLoading) {
+      const filtered = filterData(state.currentData, state.filters);
+      setState((prev) => ({ ...prev, filteredData: filtered }));
+    }
+  }, [state.currentData, state.filters, state.isLoading, filterData]);
 
   const calculateStats = useCallback((node: MusicNode): MusicStats => {
     let totalFiles = 0;
@@ -185,7 +171,6 @@ const MusicBrowser = () => {
   const stats = state.currentData
     ? calculateStats(state.currentData)
     : { totalFiles: 0, totalFolders: 0, audioFiles: 0 };
-  const folders = state.currentData ? collectFolders(state.currentData) : [];
 
   return (
     <div className="music-browser-app">
@@ -193,24 +178,14 @@ const MusicBrowser = () => {
         currentView={state.currentView}
         searchTerm={state.filters.searchTerm}
         onViewChange={handleViewChange}
-        onSearchChange={(searchTerm) => handleFilterChange({ searchTerm })}
+        onSearchChange={(searchTerm: string) =>
+          handleFilterChange({ searchTerm })
+        }
         onClearSearch={handleClearSearch}
       />
 
       <div className="main-content">
-        <Sidebar
-          stats={stats}
-          folders={folders}
-          fileTypeFilter={state.filters.fileTypeFilter}
-          folderFilter={state.filters.folderFilter}
-          onFileTypeChange={(fileTypeFilter) =>
-            handleFilterChange({ fileTypeFilter })
-          }
-          onFolderChange={(folderFilter) =>
-            handleFilterChange({ folderFilter })
-          }
-          isLoading={state.isLoading}
-        />
+        <Sidebar stats={stats} isLoading={state.isLoading} />
 
         <ContentArea
           data={state.filteredData}
@@ -223,26 +198,6 @@ const MusicBrowser = () => {
       </div>
     </div>
   );
-};
-
-// Helper function to collect folders
-const collectFolders = (node: MusicNode): string[] => {
-  const folders: Set<string> = new Set();
-
-  const collect = (n: MusicNode) => {
-    if (n.type === "folder" && n.name !== "Music Collection") {
-      folders.add(n.name);
-    }
-
-    if (n.children) {
-      for (const child of n.children) {
-        collect(child);
-      }
-    }
-  };
-
-  collect(node);
-  return Array.from(folders);
 };
 
 export default MusicBrowser;
