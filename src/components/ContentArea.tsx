@@ -98,8 +98,7 @@ const ContentArea = ({
   };
 
   const count = countItems(data);
-  const hasFilters =
-    filters.searchTerm || filters.fileTypeFilter || filters.folderFilter;
+  const hasFilters = filters.searchTerm;
   const resultsText = hasFilters
     ? `${count.files} files, ${count.folders} folders found`
     : `${count.files} files, ${count.folders} folders total`;
