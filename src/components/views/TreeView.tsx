@@ -98,7 +98,13 @@ const TreeView = ({ data, onSongClick }: TreeViewProps) => {
           style={{ paddingLeft: `${level * 20}px` }}
         >
           {isFolder && (
-            <span className="folder-toggle">
+            <span
+              className="folder-toggle"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFolder(node.path);
+              }}
+            >
               {isCollapsed ? <FaChevronRight /> : <FaChevronDown />}
             </span>
           )}
