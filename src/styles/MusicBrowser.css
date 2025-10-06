@@ -152,7 +152,7 @@ body {
   gap: 2rem;
 }
 
-.stats-panel, .filter-panel {
+.stats-panel {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 12px;
@@ -160,7 +160,7 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.stats-panel h3, .filter-panel h3 {
+.stats-panel h3 {
   color: #667eea;
   margin-bottom: 1rem;
   font-size: 1.1rem;
@@ -193,62 +193,7 @@ body {
   border-radius: 4px;
 }
 
-.filter-group {
-  margin-bottom: 1rem;
-}
 
-.filter-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.filter-group select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 2px solid #e1e5e9;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: border-color 0.3s ease;
-}
-
-.filter-group select:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-/* Filter Header with Clear Button */
-.filter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.filter-header h3 {
-  margin-bottom: 0;
-}
-
-.clear-filters-btn {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.clear-filters-btn:hover {
-  background: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-}
 
 /* Content */
 .content {
