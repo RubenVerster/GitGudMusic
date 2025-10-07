@@ -347,8 +347,6 @@
 │   ├── Witchdoctor.mp3
 │   ├── You Ain't Seen Nothing Yet.mp3
 │   └── You've Got Another Thing Coming.mp3
-├── 4K Sort.xspf
-├── All Music.xspf
 ├── Migrated
 │   ├── 0RENAME
 │   │   ├── Asian Kung-Fu Generation Discography
@@ -3006,7 +3004,4 @@
 │       ├── The Other.mp3
 │       ├── Treadstone.mp3
 │       ├── Victory! Victory! Victory!.mp3
-│       └── Weightless.mp3
-└── music.txt
-
-55 directories, 2955 files
+└──     └── Weightless.mp3
