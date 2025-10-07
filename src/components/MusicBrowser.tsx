@@ -11,6 +11,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import ContentArea from "./ContentArea";
 import MobileStatsPanel from "./MobileStatsPanel";
+import RecommendationPopup from "./RecommendationPopup";
 import "../styles/MusicBrowser.css";
 
 const MusicBrowser = () => {
@@ -213,6 +214,7 @@ const MusicBrowser = () => {
       </div>
 
       <MobileStatsPanel stats={stats} isLoading={state.isLoading} />
+      <RecommendationPopup />
     </div>
   );
 };
