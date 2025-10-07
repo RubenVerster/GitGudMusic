@@ -14,7 +14,7 @@ A modern, responsive music collection browser built with React, TypeScript, and 
 
 ## 🚀 Live Demo
 
-Visit the live application: [GitGudMusic Browser](https://yourusername.github.io/GitGudMusic/)
+Visit the live application: [GitGudMusic Browser](https://rubenverster.github.io/GitGudMusic/)
 
 ## 🛠️ Technology Stack
 
@@ -28,7 +28,7 @@ Visit the live application: [GitGudMusic Browser](https://yourusername.github.io
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/GitGudMusic.git
+git clone https://github.com/rubenverster/GitGudMusic.git
 cd GitGudMusic
 ```
 

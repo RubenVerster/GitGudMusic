@@ -149,9 +149,15 @@ const MusicBrowser = () => {
     // Remove file extension
     searchTerm = searchTerm.replace(/\.(mp3|m4a|wav|flac)$/i, "");
 
-    // Remove common patterns that might interfere with search
-    searchTerm = searchTerm.replace(/\s*\([^)]*\)\s*/g, " "); // Remove content in parentheses
-    searchTerm = searchTerm.replace(/\s*\[[^\]]*\]\s*/g, " "); // Remove content in brackets
+    // Remove common patterns that might interfere with search, but preserve remix/version info
+    searchTerm = searchTerm.replace(
+      /\s*\((?:Official|Music|Video|Audio|Lyric|HD|HQ|4K|1080p|720p|480p|360p|240p|144p)\s*(?:Video|Audio|Music|Version)?\)\s*/gi,
+      " "
+    ); // Remove technical/quality indicators in parentheses
+    searchTerm = searchTerm.replace(
+      /\s*\[(?:Official|Music|Video|Audio|Lyric|HD|HQ|4K|1080p|720p|480p|360p|240p|144p)\s*(?:Video|Audio|Music|Version)?\]\s*/gi,
+      " "
+    ); // Remove technical/quality indicators in brackets
     searchTerm = searchTerm.replace(
       /\s*-\s*(Official|Music|Video|Audio|Remix|Extended|Radio|Edit|Version|Mix|Remaster|Remastered).*$/i,
       ""
