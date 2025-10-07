@@ -63,16 +63,17 @@ class MusicDataService {
 
       // Parse tree structure: count │ characters to determine level
       // Format: │   │   ├── filename or │   │   └── filename
-      const treeMatch = line.match(/^((?:│\s{3})*)(├──|└──)\s*(.+)$/);
+      // Handle variable spacing patterns in tree output
+      const treeMatch = line.match(/^((?:│\s*)*)(├──|└──)\s*(.+)$/);
       if (!treeMatch) {
         console.warn(`Could not parse line: "${line}"`);
         continue;
       }
 
-      const indentPart = treeMatch[1]; // All the │    parts
+      const indentPart = treeMatch[1]; // All the │ and space parts
       const name = treeMatch[3].trim(); // The actual file/folder name
 
-      // Calculate level: each │    represents one level
+      // Calculate level: each │ represents one level
       const level = (indentPart.match(/│/g) || []).length;
 
       // Determine if it's a file or folder
