@@ -85,6 +85,11 @@ const MusicBrowser = () => {
 
       if (node.children) {
         for (const child of node.children) {
+          // Check if this child should be excluded (like XSPF files)
+          if (child.type === "file" && child.extension === "xspf") {
+            continue; // Skip XSPF files
+          }
+
           const filteredChild = filterData(child, filters);
           if (filteredChild && matchesFilters(filteredChild, filters)) {
             filtered.children!.push(filteredChild);
