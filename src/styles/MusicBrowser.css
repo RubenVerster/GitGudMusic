@@ -492,6 +492,77 @@ body {
   font-weight: 600;
 }
 
+/* Mobile Stats Panel */
+.mobile-stats-panel {
+  display: none; /* Hidden by default, shown only on mobile */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.mobile-stats-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-stats-toggle:active {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.mobile-stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  color: #667eea;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.mobile-stats-header svg:first-child {
+  margin-right: 0.5rem;
+}
+
+.mobile-stats-content {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-stats-panel .stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-stats-panel .stat-item:last-child {
+  border-bottom: none;
+}
+
 /* Notifications */
 @keyframes slideIn {
   from {
@@ -564,23 +635,23 @@ body {
   }
 
   .main-content {
-    flex-direction: column;
+    flex-direction: row; /* Keep as row since we're hiding sidebar */
     padding: 1rem;
     gap: 1rem;
+    padding-bottom: 5rem; /* Add space for mobile stats panel */
   }
 
   .sidebar {
-    width: 100%;
-    order: 2; /* Move sidebar below content on mobile */
+    display: none; /* Hide sidebar on mobile */
   }
 
   .content {
-    order: 1; /* Move content above sidebar on mobile */
+    width: 100%; /* Take full width when sidebar is hidden */
   }
 
-  .stats-panel {
-    position: static;
-    top: auto;
+  /* Show mobile stats panel */
+  .mobile-stats-panel {
+    display: block;
   }
 
   .grid-view {
@@ -621,6 +692,7 @@ body {
 
   .main-content {
     padding: 0.75rem;
+    padding-bottom: 5rem; /* Space for mobile stats panel */
   }
 
   .header h1 {
@@ -660,5 +732,14 @@ body {
 
   .music-browser {
     padding: 1rem;
+  }
+
+  .mobile-stats-header {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .mobile-stats-content {
+    padding: 0 1rem 1rem;
   }
 }

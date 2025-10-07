@@ -10,6 +10,7 @@ import { musicDataService } from "../services/musicDataService";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import ContentArea from "./ContentArea";
+import MobileStatsPanel from "./MobileStatsPanel";
 import "../styles/MusicBrowser.css";
 
 const MusicBrowser = () => {
@@ -202,6 +203,8 @@ const MusicBrowser = () => {
           onSongClick={searchOnYouTubeMusic}
         />
       </div>
+
+      <MobileStatsPanel stats={stats} isLoading={state.isLoading} />
     </div>
   );
 };
