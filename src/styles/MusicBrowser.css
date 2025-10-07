@@ -1,3 +1,7 @@
+:root {
+  --header-height: 80px; /* Approximate header height for sticky positioning */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -158,6 +162,8 @@ body {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: calc(var(--header-height) + 2rem);
 }
 
 .stats-panel h3 {
@@ -520,6 +526,11 @@ body {
 
   .sidebar {
     width: 100%;
+  }
+
+  .stats-panel {
+    position: static;
+    top: auto;
   }
 
   .header-content {
