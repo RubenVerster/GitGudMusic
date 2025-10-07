@@ -54,6 +54,11 @@ const MusicBrowser = () => {
 
   const matchesFilters = useCallback(
     (node: MusicNode, filters: FilterState): boolean => {
+      // Exclude XSPF playlist files
+      if (node.type === "file" && node.extension === "xspf") {
+        return false;
+      }
+
       // Only search filter now
       if (
         filters.searchTerm &&
@@ -105,7 +110,10 @@ const MusicBrowser = () => {
     let audioFiles = 0;
 
     if (node.type === "file") {
-      totalFiles++;
+      // Exclude XSPF files from total file count
+      if (node.extension !== "xspf") {
+        totalFiles++;
+      }
       if (["mp3", "m4a", "wav", "flac"].includes(node.extension || "")) {
         audioFiles++;
       }
