@@ -222,6 +222,10 @@ class MusicDataService {
           if (knownFileExtensions.includes(ext)) {
             isFile = true;
             extension = ext.substring(1);
+            // Debug XSPF files specifically
+            if (ext === ".xspf") {
+              console.log("Parsing XSPF file:", name, "extension:", extension);
+            }
           }
         }
       }

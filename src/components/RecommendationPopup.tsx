@@ -29,7 +29,7 @@ const RecommendationPopup = () => {
 
   const handleVisitSite = () => {
     window.open(
-      "https://www.4kdownload.com/products/videodownloader-42",
+      "https://www.4kdownload.com/thanks-for-downloading?ref=mdi3nzi",
       "_blank"
     );
     handleDismiss();
