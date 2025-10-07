@@ -49,6 +49,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 2rem;
+  min-height: 60px; /* Ensure consistent header height */
 }
 
 .header h1 {
@@ -86,6 +87,7 @@ body {
   font-size: 1rem;
   width: 300px;
   transition: all 0.3s ease;
+  min-width: 0; /* Allow input to shrink on mobile */
 }
 
 #searchInput:focus {
@@ -519,13 +521,61 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .header {
+    padding: 0.75rem 0;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .header-controls {
+    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  #searchInput {
+    width: 100%;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .view-controls {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .view-btn {
+    flex: 1;
+    max-width: 80px;
+    padding: 0.6rem;
+  }
+
   .main-content {
     flex-direction: column;
     padding: 1rem;
+    gap: 1rem;
   }
 
   .sidebar {
     width: 100%;
+    order: 2; /* Move sidebar below content on mobile */
+  }
+
+  .content {
+    order: 1; /* Move content above sidebar on mobile */
   }
 
   .stats-panel {
@@ -533,22 +583,26 @@ body {
     top: auto;
   }
 
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .header-controls {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  #searchInput {
-    width: 250px;
-  }
-
   .grid-view {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .grid-item {
+    padding: 1rem;
+  }
+
+  .grid-item-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .list-item {
+    padding: 0.75rem;
+  }
+
+  .tree-item {
+    padding: 0.5rem 0.25rem;
   }
 
   .notification {
@@ -556,5 +610,55 @@ body {
     right: 10px;
     left: 10px;
     font-size: 0.9rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .header-content {
+    padding: 0 0.75rem;
+  }
+
+  .main-content {
+    padding: 0.75rem;
+  }
+
+  .header h1 {
+    font-size: 1.3rem;
+  }
+
+  .view-btn {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .grid-item {
+    padding: 0.75rem;
+  }
+
+  .grid-item-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .list-item {
+    padding: 0.5rem;
+  }
+
+  .tree-item {
+    padding: 0.4rem 0.2rem;
+  }
+
+  .content-header {
+    padding: 1rem;
+  }
+
+  .music-browser {
+    padding: 1rem;
   }
 }
