@@ -4,6 +4,35 @@ class MusicDataService {
   private musicData: MusicNode | null = null;
   private isLoading = false;
 
+  // Method to clear cache and force reload
+  clearCache() {
+    this.musicData = null;
+    // Also clear localStorage cache
+    localStorage.removeItem("musicData-json");
+    localStorage.removeItem("musicData-timestamp");
+    console.log("Music data cache cleared");
+  }
+
+  // Method to get cache info for debugging
+  getCacheInfo() {
+    const cachedJson = localStorage.getItem("musicData-json");
+    const cachedTimestamp = localStorage.getItem("musicData-timestamp");
+
+    if (!cachedJson || !cachedTimestamp) {
+      return { cached: false, age: 0, size: 0 };
+    }
+
+    const age = Date.now() - parseInt(cachedTimestamp);
+    const size = new Blob([cachedJson]).size;
+
+    return {
+      cached: true,
+      age: Math.round(age / 1000), // age in seconds
+      size: Math.round(size / 1024), // size in KB
+      timestamp: new Date(parseInt(cachedTimestamp)).toLocaleString(),
+    };
+  }
+
   async loadMusicData(): Promise<MusicNode> {
     if (this.musicData) {
       return this.musicData;
@@ -20,6 +49,20 @@ class MusicDataService {
     this.isLoading = true;
 
     try {
+      // First, try to load from localStorage cache
+      const cachedJson = localStorage.getItem("musicData-json");
+      const cachedTimestamp = localStorage.getItem("musicData-timestamp");
+
+      if (cachedJson && cachedTimestamp) {
+        const cacheAge = Date.now() - parseInt(cachedTimestamp);
+        // Use cache if it's less than 1 hour old
+        if (cacheAge < 60 * 60 * 1000) {
+          console.log("Loading music data from cache");
+          this.musicData = JSON.parse(cachedJson);
+          return this.musicData!;
+        }
+      }
+
       // Try to load the music.txt file - handle both dev and production paths
       const musicPath = import.meta.env.DEV
         ? "/music.txt"
@@ -30,7 +73,11 @@ class MusicDataService {
       }
 
       const treeString = await response.text();
-      this.musicData = this.parseTreeData(treeString);
+      console.log("Parsing music.txt to JSON structure...");
+      this.musicData = this.parseTreeToJson(treeString);
+
+      // Cache the parsed JSON data
+      this.cacheJsonData(this.musicData!);
     } catch (error) {
       console.warn("Could not load music.txt file:", error);
       console.log("Using fallback sample data...");
@@ -41,60 +88,154 @@ class MusicDataService {
       this.isLoading = false;
     }
 
-    return this.musicData;
+    return this.musicData!;
   }
 
-  private parseTreeData(treeString: string): MusicNode {
-    const lines = treeString.trim().split("\n");
+  private cacheJsonData(data: MusicNode) {
+    try {
+      const jsonString = JSON.stringify(data);
+      localStorage.setItem("musicData-json", jsonString);
+      localStorage.setItem("musicData-timestamp", Date.now().toString());
+      console.log("Music data cached to localStorage");
+    } catch (error) {
+      console.warn("Failed to cache music data:", error);
+    }
+  }
+
+  private parseTreeToJson(treeString: string): MusicNode {
+    const startTime = performance.now();
+    const lines = treeString.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    console.log(`Parsing ${lines.length} lines from music.txt...`);
+
+    // Parse each line to extract depth and name
+    const parseLine = (line: string) => {
+      // Find the last occurrence of a branch symbol to determine depth
+      const idx = Math.max(line.lastIndexOf("├"), line.lastIndexOf("└"));
+      let depth = 0;
+      let name = line.trim();
+
+      if (idx !== -1) {
+        const prefix = line.slice(0, idx);
+        const pseudo = prefix.replace(/│/g, " ");
+        depth = Math.floor(pseudo.length / 4);
+        name = line
+          .slice(idx)
+          .replace(/^[├└]──\s*/, "")
+          .trim();
+      } else {
+        if (name === "." || name === "./") {
+          depth = 0;
+          name = ".";
+        } else {
+          depth = 0;
+        }
+      }
+      return { depth, name };
+    };
+
+    // Parse all lines and determine if each is a directory
+    const items = lines.map(parseLine);
+    const nodes = items.map((item, i) => {
+      const next = items[i + 1];
+      const isDir = !!next && next.depth > item.depth;
+      return { ...item, isDir };
+    });
+
+    // Audio file extensions to recognize
+    const audioExts = new Set([
+      ".mp3",
+      ".m4a",
+      ".flac",
+      ".wav",
+      ".aac",
+      ".ogg",
+      ".wma",
+    ]);
+
+    // Build the tree structure
     const root: MusicNode = {
       name: "Music Collection",
       type: "folder",
       children: [],
       path: "",
     };
-    const stack: Array<{ node: MusicNode; level: number }> = [
-      { node: root, level: -1 },
+
+    const stack: Array<{ node: MusicNode; depth: number }> = [
+      { node: root, depth: -1 },
     ];
 
-    for (let i = 1; i < lines.length; i++) {
-      // Skip the first line (root ".")
-      const line = lines[i];
-      if (!line.trim()) continue;
+    nodes.forEach((item) => {
+      const { depth, name, isDir } = item;
 
-      // Parse tree structure: count │ characters to determine level
-      // Format: │   │   ├── filename or │   │   └── filename
-      // Handle variable spacing patterns in tree output
-      const treeMatch = line.match(/^((?:│\s*)*)(├──|└──)\s*(.+)$/);
-      if (!treeMatch) {
-        console.warn(`Could not parse line: "${line}"`);
-        continue;
+      // Skip root entry
+      if (name === "." && depth === 0) return;
+
+      // Adjust stack to current depth
+      while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
+        stack.pop();
       }
 
-      const indentPart = treeMatch[1]; // All the │ and space parts
-      const name = treeMatch[3].trim(); // The actual file/folder name
+      // Determine if this is a file or folder
+      let isFile = false;
+      let extension: string | undefined;
 
-      // Calculate level: each │ represents one level
-      const level = (indentPart.match(/│/g) || []).length;
+      if (!isDir) {
+        // Check if it has an audio file extension
+        const dot = name.lastIndexOf(".");
+        const ext = dot >= 0 ? name.slice(dot).toLowerCase() : "";
+        if (audioExts.has(ext)) {
+          isFile = true;
+          extension = ext.substring(1); // Remove the dot
+        } else {
+          // Check for other known file extensions
+          const knownFileExtensions = [
+            ".txt",
+            ".pdf",
+            ".doc",
+            ".docx",
+            ".xls",
+            ".xlsx",
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".zip",
+            ".rar",
+            ".7z",
+            ".tar",
+            ".gz",
+            ".exe",
+            ".msi",
+            ".dmg",
+            ".iso",
+            ".xspf",
+            ".pls",
+            ".m3u",
+            ".m3u8",
+            ".cue",
+            ".log",
+            ".nfo",
+            ".sfv",
+            ".md5",
+            ".sha1",
+          ];
+          if (knownFileExtensions.includes(ext)) {
+            isFile = true;
+            extension = ext.substring(1);
+          }
+        }
+      }
 
-      // Determine if it's a file or folder
-      const isFile = name.includes(".") && !name.endsWith("/");
-      const fileExtension = isFile
-        ? name.split(".").pop()?.toLowerCase()
-        : undefined;
-
+      // Create the node
       const node: MusicNode = {
         name: name,
         type: isFile ? "file" : "folder",
-        extension: fileExtension,
+        extension: extension,
         children: isFile ? undefined : [],
         path: "",
       };
 
-      // Find the correct parent by popping stack until we find a parent at level-1
-      while (stack.length > 0 && stack[stack.length - 1].level >= level) {
-        stack.pop();
-      }
-
+      // Add to parent
       if (stack.length > 0) {
         const parent = stack[stack.length - 1].node;
         if (!parent.children) {
@@ -104,11 +245,11 @@ class MusicDataService {
         node.path = parent.path ? `${parent.path}/${name}` : name;
       }
 
-      // Add folders to the stack for potential children
+      // Add directories to stack for potential children
       if (!isFile) {
-        stack.push({ node: node, level: level });
+        stack.push({ node: node, depth: depth });
       }
-    }
+    });
 
     // Debug: count total items parsed
     const countItems = (
@@ -132,8 +273,11 @@ class MusicDataService {
     };
 
     const stats = countItems(root);
+    const parseTime = performance.now() - startTime;
     console.log(
-      `Parsed music data: ${stats.files} files, ${stats.folders} folders`
+      `Parsed music data: ${stats.files} files, ${
+        stats.folders
+      } folders in ${parseTime.toFixed(2)}ms`
     );
 
     return root;
@@ -202,3 +346,11 @@ class MusicDataService {
 }
 
 export const musicDataService = new MusicDataService();
+
+// Expose service methods for debugging in development
+if (import.meta.env.DEV) {
+  (window as unknown as { musicDataService: unknown }).musicDataService = {
+    clearCache: () => musicDataService.clearCache(),
+    getCacheInfo: () => musicDataService.getCacheInfo(),
+  };
+}

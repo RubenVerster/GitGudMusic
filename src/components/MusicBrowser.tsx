@@ -31,6 +31,8 @@ const MusicBrowser = () => {
     const loadData = async () => {
       try {
         setState((prev) => ({ ...prev, isLoading: true, error: null }));
+        // Clear cache to test new parser
+        musicDataService.clearCache();
         const data = await musicDataService.loadMusicData();
         setState((prev) => ({
           ...prev,
@@ -85,11 +87,6 @@ const MusicBrowser = () => {
 
       if (node.children) {
         for (const child of node.children) {
-          // Check if this child should be excluded (like XSPF files)
-          if (child.type === "file" && child.extension === "xspf") {
-            continue; // Skip XSPF files
-          }
-
           const filteredChild = filterData(child, filters);
           if (filteredChild && matchesFilters(filteredChild, filters)) {
             filtered.children!.push(filteredChild);
