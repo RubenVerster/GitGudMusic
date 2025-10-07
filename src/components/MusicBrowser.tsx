@@ -31,8 +31,6 @@ const MusicBrowser = () => {
     const loadData = async () => {
       try {
         setState((prev) => ({ ...prev, isLoading: true, error: null }));
-        // Clear cache to test new parser
-        musicDataService.clearCache();
         const data = await musicDataService.loadMusicData();
         setState((prev) => ({
           ...prev,
@@ -59,18 +57,11 @@ const MusicBrowser = () => {
     (node: MusicNode, filters: FilterState): boolean => {
       // Exclude XSPF playlist files
       if (node.type === "file" && node.extension === "xspf") {
-        console.log(
-          "Filtering out XSPF file:",
-          node.name,
-          "extension:",
-          node.extension
-        );
         return false;
       }
 
       // Also check by filename if extension check fails
       if (node.type === "file" && node.name.toLowerCase().endsWith(".xspf")) {
-        console.log("Filtering out XSPF file by name:", node.name);
         return false;
       }
 

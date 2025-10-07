@@ -1,5 +1,6 @@
 import { FaChartBar } from "react-icons/fa";
 import type { MusicStats } from "../types/music";
+import SidebarRecommendationCard from "./SidebarRecommendationCard";
 
 interface SidebarProps {
   stats: MusicStats;
@@ -32,6 +33,8 @@ const Sidebar = ({ stats, isLoading }: SidebarProps) => {
           </span>
         </div>
       </div>
+
+      <SidebarRecommendationCard />
     </aside>
   );
 };
