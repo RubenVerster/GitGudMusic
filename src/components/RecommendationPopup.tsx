@@ -28,10 +28,7 @@ const RecommendationPopup = () => {
   };
 
   const handleVisitSite = () => {
-    window.open(
-      "https://www.4kdownload.com/thanks-for-downloading?ref=mdi3nzi",
-      "_blank"
-    );
+    window.open("https://www.4kdownload.com/?ref=mdi3nzi", "_blank");
     handleDismiss();
   };
 
